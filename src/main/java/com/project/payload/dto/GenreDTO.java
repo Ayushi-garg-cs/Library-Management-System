@@ -1,28 +1,25 @@
-package com.project.modal;
+package com.project.payload.dto;
 
-import jakarta.persistence.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Entity
-public class Genre {
+public class GenreDTO {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
-
     @NotBlank(message="Genre code is mandatory")
     private String code;
 
@@ -35,21 +32,12 @@ public class Genre {
     @Min(value=0, message="display order cannot be negative")
     private Integer displayOrder=0;
 
-    @Column(nullable=false)
-    private boolean active=true;
-
-    @ManyToOne
-    private Genre parentGenre;
-
-    @OneToMany
-    private List<Genre> subGenres=new ArrayList<Genre>();
-
-//    @OneToMany(mappedBy="genre", cascade=CascadeType.PERSIST)
-//    private List<Book> books=new ArrayList<Book>();
-
-    @CreationTimestamp
+    private Boolean active;
+    private Long parentGenreId;
+    private String parentGenreName;
+    private List<GenreDTO> subGenres;
+    private Long bookCount;//books inside that genre
     private LocalDateTime createdDate;
-
-    @UpdateTimestamp
     private LocalDateTime updatedDate;
+
 }
