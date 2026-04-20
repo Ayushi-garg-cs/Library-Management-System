@@ -6,6 +6,8 @@ import com.project.payload.dto.GenreDTO;
 import com.project.repository.GenreRepository;
 import com.project.service.GenreService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,21 +22,12 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public GenreDTO createGenre(GenreDTO genreDTO) {
-        Genre genre=Genre.builder()
-                .code(genreDTO.getCode())
-                .name(genreDTO.getName())
-                .description(genreDTO.getDescription())
-                .displayOrder(genreDTO.getDisplayOrder())
-                .active(true)
-                .build();
-        if(genreDTO.getParentGenreId()!=null){
-            Genre parentGenre=genreRepository.findById(genreDTO.getParentGenreId()).get();
-            genre.setParentGenre(parentGenre);
-        }
+        Genre genre = genreMapper.toEntity(genreDTO);
         Genre savedGenre=genreRepository.save(genre);
 
-        GenreDTO dto= GenreMapper.toDTO(savedGenre);
-        return dto;
+        //GenreDTO dto= GenreMapper.toDTO(savedGenre);
+       // return dto;
+        return  genreMapper.toDTO(savedGenre);
     }
 
     @Override
@@ -42,5 +35,50 @@ public class GenreServiceImpl implements GenreService {
         return genreRepository.findAll().stream()
                 .map(genre->GenreMapper.toDTO(genre))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public GenreDTO getGenreById(int genreId) {
+        return null;
+    }
+
+    @Override
+    public GenreDTO updateGenre(Long genreId, GenreDTO genre) {
+        return null;
+    }
+
+    @Override
+    public void deleteGenre(int genreId) {
+
+    }
+
+    @Override
+    public void hardDeleteGenre(Long genreId) {
+
+    }
+
+    @Override
+    public List<GenreDTO> getAllActiveGenresWithSubGenres() {
+        return List.of();
+    }
+
+    @Override
+    public List<GenreDTO> getTopLevelGenres() {
+        return List.of();
+    }
+
+    @Override
+    public Page<GenreDTO> searchGenres(String searchTerm, Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public long getTotalActiveGenres() {
+        return 0;
+    }
+
+    @Override
+    public long getBookCountByGenre(Long genreId) {
+        return 0;
     }
 }
