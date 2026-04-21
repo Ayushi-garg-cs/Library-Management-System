@@ -17,7 +17,7 @@ public interface GenreRepository extends JpaRepository<Genre,Long> {
     //count total active genre
     long countByActiveTrue();
     //count book by genre
-    @Query("select count(b) from book b where b.genre.id=:genreId")
-    long countBooksByGenre(@Param("genreId") Long  genreId);
+    // @Query("select count(b) from book b where b.genre.id=:genreId")
+    // long countBooksByGenre(@Param("genreId") Long  genreId);
 
 }
