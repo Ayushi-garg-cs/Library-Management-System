@@ -1,5 +1,6 @@
 package com.project.service;
 
+import com.project.exception.GenreException;
 import com.project.modal.Genre;
 import com.project.payload.dto.GenreDTO;
 import org.springframework.data.domain.Page;
@@ -10,7 +11,10 @@ import java.util.List;
 public interface GenreService {
     GenreDTO createGenre(GenreDTO genre);
     List<GenreDTO> getAllGenres();
-    GenreDTO getGenreById(int genreId);
+    GenreDTO getGenreById(int genreId) throws GenreException;
+
+    GenreDTO getGenreById(Long genreId) throws GenreException;
+
     GenreDTO updateGenre(Long genreId, GenreDTO genre);
     void deleteGenre(int genreId);
     void hardDeleteGenre(Long genreId);

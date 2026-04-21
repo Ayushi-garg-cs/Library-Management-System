@@ -1,5 +1,6 @@
 package com.project.service.impl;
 
+import com.project.exception.GenreException;
 import com.project.mapper.GenreMapper;
 import com.project.modal.Genre;
 import com.project.payload.dto.GenreDTO;
@@ -38,8 +39,16 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public GenreDTO getGenreById(int genreId) {
+    public GenreDTO getGenreById(int genreId) throws GenreException {
         return null;
+    }
+
+    @Override
+    public GenreDTO getGenreById(Long genreId) throws GenreException {
+        Genre genre=genreRepository.findById( genreId).orElseThrow(
+                ()->new GenreException("genre not found")
+        );
+        return genreMapper.toDTO(genre);
     }
 
     @Override
