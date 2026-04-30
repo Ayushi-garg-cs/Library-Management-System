@@ -22,7 +22,7 @@ public interface GenreService {
     List<GenreDTO> getTopLevelGenres();
     Page<GenreDTO> searchGenres(String searchTerm, Pageable pageable);
     long getTotalActiveGenres();
-    long getBookCountByGenre(Long genreId)
+    long getBookCountByGenre(Long genreId);
 
 
 }

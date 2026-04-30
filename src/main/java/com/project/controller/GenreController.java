@@ -32,28 +32,48 @@ public class GenreController {
     }
 
     @GetMapping("/{genreId}")
-    public ResponseEntity<?> getGenreById(@RequestParam("genreId") long genreId) throws GenreException {
+    public ResponseEntity<?> getGenreById(@PathVariable("genreId") long genreId) throws GenreException {
         GenreDTO genres=genreService.getGenreById(genreId);
         return ResponseEntity.ok(genres);
     }
 
     @PutMapping("/{genreId}")
-    public ResponseEntity<?> updateGenre(@RequestParam("genreId") long genreId, @RequestBody GenreDTO genre) throws GenreException {
+    public ResponseEntity<?> updateGenre(@PathVariable("genreId") long genreId, @RequestBody GenreDTO genre) throws GenreException {
         GenreDTO updatedGenre=genreService.updateGenre(genreId,genre);
         return ResponseEntity.ok(updatedGenre);
     }
 
     @DeleteMapping("/{genreId}")
-    public ResponseEntity<?>  deleteGenre(@RequestParam("genreId") long genreId) throws GenreException {
+    public ResponseEntity<?>  deleteGenre(@PathVariable("genreId") long genreId) throws GenreException {
         genreService.deleteGenre((int) genreId);
         ApiResponse apiResponse=new ApiResponse("Genre Deleted-soft delete", true);
         return ResponseEntity.ok(apiResponse);
     }
 
     @DeleteMapping("/{genreId}")
-    public ResponseEntity<?> hardDeleteGenre(@RequestParam("genreId") long genreId) throws GenreException{
+    public ResponseEntity<?> hardDeleteGenre(@PathVariable("genreId") long genreId) throws GenreException{
         genreService.hardDeleteGenre((long) genreId);
         ApiResponse apiResponse=new ApiResponse("Genre Deleted-hard delete", true);
         return ResponseEntity.ok(apiResponse);
     }
+
+    @GetMapping("/top-level")
+    public ResponseEntity<?> getTopLevelGenres(){
+        List<GenreDTO> genres=genreService.getTopLevelGenres();
+        return ResponseEntity.ok(genres);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<?> getGenreCount(){
+        Long genres=genreService.getTotalActiveGenres();
+        return ResponseEntity.ok(genres);
+    }
+
+    @GetMapping("/{id}/book-count")
+    public ResponseEntity<?> getBookCountByGenre(@PathVariable("id") long genreId){
+        Long count=genreService.getBookCountByGenre(genreId);
+        return ResponseEntity.ok(count);
+    }
+
+
 }
