@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BookSearchRequest {
     private String searchTerm;
-    Long genreId;
-    Boolean availableOnly;
-    Integer page;
-    Integer size;
-    String sortBy="createdAt";
-    String sortDirection="DESC";
+    private Long genreId;
+    private Boolean availableOnly;
+    private Integer page;
+    private Integer size;
+    private String sortBy="createdAt";
+    private String sortDirection="DESC";
 }

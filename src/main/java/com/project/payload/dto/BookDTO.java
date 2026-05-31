@@ -25,7 +25,7 @@ public class BookDTO {
 
     @NotBlank(message = "Author name is mandatory")
     @Size(min=1,max=255,message = "Author name must be between 1 and 255 characters")
-    private String authorName;
+    private String author;
 
     @NotNull(message = "Genre is mandatory")
     private Long genreId;
@@ -35,7 +35,7 @@ public class BookDTO {
     private String genreCode;
 
     @Size(max=100,message = "Publisher name must not exceed 100 characters")
-    private String publisherName;
+    private String publisher;
 
     private LocalDateTime publishedDate;
 
