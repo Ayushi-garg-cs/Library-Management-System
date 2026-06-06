@@ -16,6 +16,7 @@ public class GenreMapper {
     private final GenreRepository genreRepository;
     public static GenreDTO toDTO(Genre savedGenre){
         GenreDTO dto=GenreDTO.builder()
+                .id(savedGenre.getId())
                 .code(savedGenre.getCode())
                 .name(savedGenre.getName())
                 .description(savedGenre.getDescription())
@@ -41,6 +42,7 @@ public class GenreMapper {
 
     public Genre toEntity(GenreDTO genreDTO){
         Genre genre=Genre.builder()
+                .id((genreDTO.getId()))
                 .code(genreDTO.getCode())
                 .name(genreDTO.getName())
                 .description(genreDTO.getDescription())

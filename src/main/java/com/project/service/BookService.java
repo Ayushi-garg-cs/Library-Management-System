@@ -10,12 +10,12 @@ import java.util.List;
 
 public interface BookService {
     BookDTO createBook(BookDTO bookDTO) throws BookException;
-    List<BookDTO> createBooksBulk();
-    BookDTO getBookById(Long bookId);
-    BookDTO getBookByISBN(String isbn);
-    BookDTO updateBook(Long bookId,  BookDTO bookDTO);
-    void deleteBook(Long bookId);
-    void hardDeleteBook(Long bookId);
+    List<BookDTO> createBooksBulk(List<BookDTO> bookDTOs) throws BookException;
+    BookDTO getBookById(Long bookId) throws BookException;
+    BookDTO getBookByISBN(String isbn) throws BookException;
+    BookDTO updateBook(Long bookId,  BookDTO bookDTO) throws Exception;
+    void deleteBook(Long bookId) throws BookException;
+    void hardDeleteBook(Long bookId) throws BookException;
     PageResponse<BookDTO> searchBooksEithFilters(
         BookSearchRequest searchRequest
     );

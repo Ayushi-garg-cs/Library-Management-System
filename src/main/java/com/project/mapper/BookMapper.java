@@ -54,6 +54,7 @@ public class BookMapper {
         //Map genre - fetch from database using genreId
         if(dto.getGenreId()!=null){
             Genre genre=genreRepository.findById(dto.getGenreId()).orElseThrow(()->new BookException("Genre not found"));
+            book.setGenre(genre);
         }
         book.setAvailableCopies(dto.getAvailableCopies());
         book.setTotalCopies(dto.getTotalCopies());

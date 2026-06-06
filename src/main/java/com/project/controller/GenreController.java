@@ -50,7 +50,7 @@ public class GenreController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @DeleteMapping("/{genreId}")
+    @DeleteMapping("/{genreId}/permanent")
     public ResponseEntity<?> hardDeleteGenre(@PathVariable("genreId") long genreId) throws GenreException{
         genreService.hardDeleteGenre((long) genreId);
         ApiResponse apiResponse=new ApiResponse("Genre Deleted-hard delete", true);
