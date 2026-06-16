@@ -12,6 +12,7 @@ import com.project.repository.PasswordResetTokenRepository;
 import com.project.repository.UserRepository;
 import com.project.service.AuthService;
 import com.project.service.EmailService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -77,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse register(UserDto userDto) throws UserException {
         User user=userRepository.findByEmail(userDto.getEmail());
-        if(user==null){
+        if(user!=null){
             throw new UserException("email id already registered");
         }
         User createdUser=new User();
@@ -103,7 +104,7 @@ public class AuthServiceImpl implements AuthService {
         return authResponse;
     }
 
-    //to reset password
+    //when you forget the password you can reset password
     @Override
     public void createPasswordResetToken(String email) throws UserException {
 
@@ -133,12 +134,19 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-    @Override
-    public void resetPassword(String token, String newPassword) {
+    //then ye chalega
+    @Transactional
+    public void resetPassword(String token, String newPassword) throws Exception {
+        PasswordResetToken resetToken=passwordResetTokenRepository.findByToken(token)
+                .orElseThrow(()->new RuntimeException("Token not valid!"));
+        if(resetToken.isExpired()){
+            passwordResetTokenRepository.delete(resetToken);
+            throw new Exception("Token expired");
+        }
 
-
-
-
-
+        User user=resetToken.getUser();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        passwordResetTokenRepository.delete(resetToken);
     }
 }

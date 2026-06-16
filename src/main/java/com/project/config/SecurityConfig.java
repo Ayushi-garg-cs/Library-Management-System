@@ -27,9 +27,11 @@ public class SecurityConfig {
                         SessionCreationPolicy.STATELESS
                 ))
                 .authorizeHttpRequests(Authorize->Authorize
-                        .requestMatchers("/api/**").authenticated()
+                        //remember pehle jinko allow ho uss line ko likhna then authenticated() vaali
                         //adding more security
+                        .requestMatchers("/api/subscription-plans/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class)

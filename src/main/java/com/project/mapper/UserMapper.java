@@ -2,10 +2,14 @@ package com.project.mapper;
 
 import com.project.modal.User;
 import com.project.payload.dto.UserDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
+@RequiredArgsConstructor
 public class UserMapper {
     public static UserDto toDto(User user) {
         UserDto userDto = new UserDto();

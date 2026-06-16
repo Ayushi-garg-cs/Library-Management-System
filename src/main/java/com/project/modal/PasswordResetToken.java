@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
 public class PasswordResetToken {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

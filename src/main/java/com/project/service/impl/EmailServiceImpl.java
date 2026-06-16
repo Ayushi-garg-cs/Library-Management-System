@@ -21,19 +21,19 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendEmail(String to, String subject, String body) {
-        try{
+        try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper=new MimeMessageHelper(mimeMessage,"utf-8");
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
+            helper.setFrom("ayushigarg2346@gmail.com");
             helper.setSubject(subject);
-            helper.setText(body,true);
+            helper.setText(body, true);
             helper.setTo(to);
             mailSender.send(mimeMessage);
 
-        }catch(MailException e){
-            throw new MailSendException("Failed to send email");
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
+        }catch(Exception ex){
+            ex.printStackTrace();
+            throw new RuntimeException(ex);
         }
     }
 }
