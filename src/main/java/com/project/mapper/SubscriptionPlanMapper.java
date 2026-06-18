@@ -2,7 +2,11 @@ package com.project.mapper;
 
 import com.project.modal.SubscriptionPlan;
 import com.project.payload.dto.SubscriptionPlanDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
+@RequiredArgsConstructor
 public class SubscriptionPlanMapper {
     public SubscriptionPlanDto toDto(SubscriptionPlan plan) {
         if(plan==null) return null;

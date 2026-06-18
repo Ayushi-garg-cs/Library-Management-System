@@ -31,8 +31,8 @@ public class SubscriptionPlanController {
         return ResponseEntity.ok(planService.createSubscriptionPlan(subscriptionPlanDto));
     }
 
-    @PostMapping("/admin/{id}")
-    public ResponseEntity<?>  updateSubscriptionPlan(@PathVariable Long id,@Valid @RequestBody SubscriptionPlanDto subscriptionPlanDto) throws UserException, Exception {
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<?>  updateSubscriptionPlan(@PathVariable Long id,@RequestBody SubscriptionPlanDto subscriptionPlanDto) throws UserException, Exception {
         return ResponseEntity.ok(planService.updateSubscriptionPlan(id,subscriptionPlanDto));
     }
 

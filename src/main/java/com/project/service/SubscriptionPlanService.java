@@ -11,4 +11,5 @@ public interface SubscriptionPlanService {
     SubscriptionPlanDto updateSubscriptionPlan(Long planId, SubscriptionPlanDto planDto) throws Exception, UserException;
     void deleteSubscriptionPlan(Long planId) throws Exception;
     List<SubscriptionPlanDto> getAllSubscriptionPlan();
+    SubscriptionPlan getPlanByCode(String subscriptionPlanCode) throws Exception;
 }

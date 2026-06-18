@@ -22,7 +22,7 @@ public class SubscriptionPlan {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(nullable = false)
-    String planCode;
+    private String planCode;
 
     @Column(nullable = false,length = 100)
     private String name;

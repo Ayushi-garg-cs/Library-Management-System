@@ -4,5 +4,6 @@ import com.project.modal.SubscriptionPlan;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SubscriptionPlanRepository extends JpaRepository<SubscriptionPlan,Long> {
-    boolean existsByCode(String planCode);
+    boolean existsByPlanCode(String planCode);
+    SubscriptionPlan findByPlanCode(String planCode) throws Exception;
 }

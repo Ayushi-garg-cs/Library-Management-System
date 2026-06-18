@@ -27,7 +27,7 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
 
     @Override
     public SubscriptionPlanDto createSubscriptionPlan(SubscriptionPlanDto planDto) throws Exception, UserException {
-        if(planRepository.existsByCode(planDto.getPlanCode())){
+        if(planRepository.existsByPlanCode(planDto.getPlanCode())){
             throw new Exception("Plan code already exists");
         }
         SubscriptionPlan subscriptionPlan = planMapper.toEntity(planDto);
@@ -58,5 +58,15 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
     public List<SubscriptionPlanDto> getAllSubscriptionPlan() {
         List<SubscriptionPlan> subscriptionPlans= planRepository.findAll();
         return subscriptionPlans.stream().map(planMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public SubscriptionPlan getPlanByCode(String subscriptionPlanCode) throws Exception {
+
+        SubscriptionPlan plan= planRepository.findByPlanCode(subscriptionPlanCode);
+        if(plan==null){
+            throw new Exception("Plan not found");
+        }
+        return plan;
     }
 }
