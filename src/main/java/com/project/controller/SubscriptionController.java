@@ -3,9 +3,9 @@ package com.project.controller;
 
 import com.project.exception.SubscriptionException;
 import com.project.exception.UserException;
-import com.project.modal.Subscription;
 import com.project.payload.dto.SubscriptionDto;
 import com.project.payload.response.ApiResponse;
+import com.project.payload.response.PaymentInitiateResponse;
 import com.project.service.SubscriptionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class SubscriptionController {
 
     @PostMapping("/subscribe")
     public ResponseEntity<?> subscribe(@Valid @RequestBody SubscriptionDto dto) throws UserException, Exception {
-        SubscriptionDto subscriptionDto=subscriptionService.subscribe(dto);
+        PaymentInitiateResponse subscriptionDto=subscriptionService.subscribe(dto);
         return ResponseEntity.ok().body(subscriptionDto);
     }
 
@@ -56,7 +56,7 @@ public class SubscriptionController {
 
     @PostMapping("/activate")
     public ResponseEntity<?> activateSubscription(@RequestParam Long subscriptionId,@RequestParam Long paymentId) throws UserException, SubscriptionException {
-        SubscriptionDto dto=subscriptionService.activateSubscription(subscriptionId,paymentId);
+        SubscriptionDto dto=subscriptionService.activateSubscription(subscriptionId);
         return ResponseEntity.ok().body(dto);
     }
 

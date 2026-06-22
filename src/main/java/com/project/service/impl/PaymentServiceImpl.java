@@ -2,7 +2,9 @@ package com.project.service.impl;
 
 import com.project.domain.PaymentGateway;
 import com.project.domain.PaymentStatus;
+import com.project.event.publisher.PaymentEventPublisher;
 import com.project.exception.PaymentException;
+import com.project.mapper.PaymentMapper;
 import com.project.modal.Payment;
 import com.project.modal.Subscription;
 import com.project.modal.User;
@@ -17,6 +19,7 @@ import com.project.repository.UserRepository;
 import com.project.service.PaymentService;
 import com.project.service.gateway.RazorPayService;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final SubscriptionRepository subscriptionRepository;
     private final PaymentRepository paymentRepository;
     private final RazorPayService razorPayService;
+    private final PaymentMapper paymentMapper;
+    private final PaymentEventPublisher paymentEventPublisher;
 
     @Override
     public PaymentInitiateResponse initiatePayment(PaymentInitiateRequest req) throws PaymentException {
@@ -90,8 +95,73 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentDto verifyPayment(PaymentVerifyRequest req) {
-        return null;
+    public PaymentDto verifyPayment(PaymentVerifyRequest req) throws PaymentException {
+
+        // gatway payment
+        JSONObject paymentDetails = razorPayService
+                .fetchPaymentDetails(req.getRazorpayPaymentId());
+
+        System.out.println("gatway payment details: " + paymentDetails);
+
+        long amount = paymentDetails.getLong("amount");
+
+
+        // Extract 'notes' object
+        JSONObject notes = paymentDetails.getJSONObject("notes");
+
+        // Access specific fields inside 'notes'
+
+        Long paymentId = Long.parseLong(notes.optString("payment_id"));
+
+
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new PaymentException("Payment not found with ID: " + paymentId));
+
+        if (payment.getStatus() == PaymentStatus.SUCCESS) {
+            //log.warn("Payment already completed: {}", payment.getId());
+            return paymentMapper.toDTO(payment);
+        }
+
+        boolean isValid = razorPayService.isValidPayment(
+                req.getRazorpayPaymentId());
+
+        if (payment.getGateway() == PaymentGateway.RAZORPAY) {
+
+            if (isValid) {
+                payment.setGatewayPaymentId(req.getRazorpayPaymentId());
+                payment.setGatewayOrderId(req.getRazorpayOrderId());
+                payment.setGatewaySignature(req.getRazorpaySignature());
+            }
+        }
+//        else if (payment.getGateway() == PaymentGateway.STRIPE) {
+//            isValid = stripeService.verifyPayment(req.getStripePaymentIntentId());
+//
+//            if (isValid) {
+//                payment.setGatewayPaymentId(req.getStripePaymentIntentId());
+//            }
+//        }
+
+        if (isValid) {
+            payment.setStatus(PaymentStatus.SUCCESS);
+            payment.setCompletedAt(LocalDateTime.now());
+            //log.info("Payment verified successfully: {}", payment.getId());
+
+            // Save payment first
+            payment = paymentRepository.save(payment);
+
+            // Publish payment success event (instead of direct service calls)
+            paymentEventPublisher.publishPaymentSuccessEvent(payment);
+        } else {
+            payment.setStatus(PaymentStatus.FAILED);
+            payment.setFailureReason("Payment verification failed");
+            //log.error("Payment verification failed: {}", payment.getId());
+            payment = paymentRepository.save(payment);
+
+            // Publish payment failed event
+            //publishPaymentFailedEvent(payment);
+        }
+
+        return paymentMapper.toDTO(payment);
     }
 
     @Override
@@ -111,7 +181,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Page<PaymentDto> getAllPayments(Pageable pageable) {
-        return null;
+        Page<Payment> payments =paymentRepository.findAll(pageable);
+        return payments.map(paymentMapper::toDTO);
     }
 
     @Override

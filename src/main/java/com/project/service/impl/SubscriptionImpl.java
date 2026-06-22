@@ -1,26 +1,28 @@
 package com.project.service.impl;
 
+import com.project.domain.PaymentGateway;
+import com.project.domain.PaymentType;
 import com.project.exception.SubscriptionException;
 import com.project.exception.UserException;
 import com.project.mapper.SubscriptionMapper;
 import com.project.modal.Subscription;
 import com.project.modal.SubscriptionPlan;
-import com.project.modal.User;
 import com.project.payload.dto.SubscriptionDto;
 import com.project.payload.dto.UserDto;
+import com.project.payload.request.PaymentInitiateRequest;
+import com.project.payload.response.PaymentInitiateResponse;
 import com.project.repository.SubscriptionPlanRepository;
 import com.project.repository.SubscriptionRepository;
+import com.project.service.PaymentService;
 import com.project.service.SubscriptionService;
 import com.project.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,10 +32,11 @@ public class SubscriptionImpl implements SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionMapper subscriptionMapper;
     private final UserService userService;
+    private final PaymentService paymentService;
 
 
     @Override
-    public SubscriptionDto subscribe(SubscriptionDto subscriptionDto) throws Exception, UserException {
+    public PaymentInitiateResponse subscribe(SubscriptionDto subscriptionDto) throws Exception, UserException {
         UserDto user=userService.getcurrentUser();
 
         SubscriptionPlan plan= subscriptionPlanRepository
@@ -46,9 +49,22 @@ public class SubscriptionImpl implements SubscriptionService {
         subscription.initializeFromPlan();
         subscription.setIsActive(false);
         Subscription savedSubscription=subscriptionRepository.save(subscription);
-        //create payment(todo)
 
-        return subscriptionMapper.toDTO(savedSubscription);
+
+        // 5. Create payment entity
+        PaymentInitiateRequest paymentInitiateRequest = PaymentInitiateRequest
+                .builder()
+                .userId(user.getId())
+                .subscriptionId(subscription.getId())
+                .paymentType(PaymentType.MEMBERSHIP)
+                .gateway(PaymentGateway.RAZORPAY)
+                .amount(subscription.getPrice())
+                .currency(subscription.getCurrency())
+                .description("Library Subscription - " + plan.getName())
+                .build();
+
+        return paymentService
+                .initiatePayment(paymentInitiateRequest);
     }
 
     @Override
@@ -91,7 +107,7 @@ public class SubscriptionImpl implements SubscriptionService {
     }
 
     @Override
-    public SubscriptionDto activateSubscription(Long subscriptionId, Long paymentId) throws SubscriptionException {
+    public SubscriptionDto activateSubscription(Long subscriptionId) throws SubscriptionException {
         Subscription subscription = subscriptionRepository.findById(subscriptionId)
                 .orElseThrow(() -> new SubscriptionException(
                         "Subscription not found with ID: " + subscriptionId));

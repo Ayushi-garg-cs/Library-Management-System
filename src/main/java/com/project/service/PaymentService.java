@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface PaymentService {
     PaymentInitiateResponse initiatePayment(PaymentInitiateRequest req) throws PaymentException;
-    PaymentDto verifyPayment(PaymentVerifyRequest req);
+    PaymentDto verifyPayment(PaymentVerifyRequest req) throws PaymentException;
     PaymentDto getPaymentById(Long paymentId) throws PaymentException;
 
     /**

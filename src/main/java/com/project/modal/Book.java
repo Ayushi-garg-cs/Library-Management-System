@@ -1,6 +1,7 @@
 package com.project.modal;
 
 
+import com.project.domain.BookLoanStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.*;
@@ -49,6 +50,7 @@ public class Book {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
 
     @AssertTrue(message="Available Copies cannot exceed total copies")
     public boolean isAvailableCopiesValid() {

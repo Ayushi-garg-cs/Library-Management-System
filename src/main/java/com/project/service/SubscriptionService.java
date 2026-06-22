@@ -3,6 +3,7 @@ package com.project.service;
 import com.project.exception.SubscriptionException;
 import com.project.exception.UserException;
 import com.project.payload.dto.SubscriptionDto;
+import com.project.payload.response.PaymentInitiateResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface SubscriptionService {
     /**
      * Create new subscription with payment
      */
-    SubscriptionDto subscribe(SubscriptionDto subscriptionDto) throws Exception, UserException;
+    PaymentInitiateResponse subscribe(SubscriptionDto subscriptionDto) throws Exception, UserException;
 
     /**
      * Get active subscription for user
@@ -41,7 +42,7 @@ public interface SubscriptionService {
     /**
      * Verify and activate subscription after successful payment
      */
-    SubscriptionDto activateSubscription(Long subscriptionId, Long paymentId) throws SubscriptionException;
+    SubscriptionDto activateSubscription(Long subscriptionId) throws SubscriptionException;
 
     /**
      * Get all active subscriptions (Admin)
