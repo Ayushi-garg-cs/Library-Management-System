@@ -1,8 +1,11 @@
 package com.project.config;
 
+import com.project.oauth2.CustomOAuth2UserService;
+import com.project.oauth2.OAuth2LoginSuccessHandler;
 import io.jsonwebtoken.JwtVisitor;
 import jakarta.servlet.http.HttpServletRequest;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,6 +23,16 @@ import java.util.Collections;
 
 @Configuration
 public class SecurityConfig {
+
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
+
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -29,8 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(Authorize->Authorize
                         //remember pehle jinko allow ho uss line ko likhna then authenticated() vaali
                         //adding more security
-                        .requestMatchers("/api/subscription-plans/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/super-admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 )
@@ -39,6 +51,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 //cors configuration so inside this we will tell backend that this is my frontend url ...if somebody wants to fetch data from this url then give response and don't block request
                 .cors(cors->cors.configurationSource(corsConfigurationSource()))
+                .exceptionHandling(
+                        exceptionHandler -> exceptionHandler
+                                .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .build();
 
     }
@@ -48,7 +63,7 @@ public class SecurityConfig {
             @Override
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                 CorsConfiguration corsConfiguration = new CorsConfiguration();
-                corsConfiguration.setAllowCredentials(true);
+
                 //this * means all frontend url can fetch data from backend but we cant provide this star here...we need to provide only our frontend domain
                 //corsConfiguration.addAllowedOrigin("*");
                 corsConfiguration.setAllowedOrigins(
@@ -59,6 +74,8 @@ public class SecurityConfig {
                         )
                 );
                 //how many methods do you want to allow for this(GET,PUT,POST,DELETE)
+                corsConfiguration.setAllowCredentials(true);
+                corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
                 corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
                 corsConfiguration.setExposedHeaders(Collections.singletonList("Authorization"));
                 corsConfiguration.setMaxAge(360L);
