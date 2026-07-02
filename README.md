@@ -52,11 +52,3 @@ Auto-Overdue Marking: A background scheduler checks for late books and marks the
 
 Renewals: Users can renew a book only if no one else is waiting for it.
 
-6. 📊 Analytics Dashboard
-Data visualization using Recharts/Chart.js.
-
-Revenue Charts: See how much money the library made this month.
-
-User Growth: Track new signups.
-
-Book Popularity: See which genres are trending.
